@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login / Signup</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-container">
+    <div class="form-box">
+      <h2 id="formTitle">Sign In</h2>
+      <input type="text" id="username" placeholder="Username" style="display:none;" />
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="handleAuth()" class="auth-button">Sign In</button>
+      <p class="toggle-text">
+        Don't have an account? <span onclick="toggleForm()">Sign Up</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let isSignup = false;
+
+    function toggleForm() {
+      isSignup = !isSignup;
+      const usernameInput = document.getElementById("username");
+      const title = document.getElementById("formTitle");
+      const button = document.querySelector(".auth-button");
+      const toggleText = document.querySelector(".toggle-text span");
+
+      if (isSignup) {
+        usernameInput.style.display = "block";
+        title.textContent = "Sign Up";
+        button.textContent = "Sign Up";
+        toggleText.textContent = "Sign In";
+      } else {
+        usernameInput.style.display = "none";
+        title.textContent = "Sign In";
+        button.textContent = "Sign In";
+        toggleText.textContent = "Sign Up";
+      }
+    }
+
+    function handleAuth() {
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (isSignup) {
+        if (!username || !email || !password) return alert("Fill all fields");
+        if (users.find(u => u.email === email)) return alert("Email already registered");
+
+        users.push({ username, email, password });
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Signup successful! Please sign in.");
+        toggleForm();
+      } else {
+        const user = users.find(u => u.email === email && u.password === password);
+        if (!user) return alert("Invalid credentials");
+
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        location.href = "home.html";
+      }
+    }
+  </script>
+</body>
+</html>
